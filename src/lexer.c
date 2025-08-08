@@ -42,11 +42,3 @@ struct Token lexer_next(struct Lexer *lexer) {
 
     return (struct Token){tok_number, value};
 }
-
-struct Token lexer_peek(struct Lexer *lexer) {
-    size_t offset = lexer->offset;
-    struct Token token = lexer_next(lexer);
-
-    lexer->offset = offset;
-    return token;
-}

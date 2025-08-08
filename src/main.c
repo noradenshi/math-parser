@@ -63,22 +63,6 @@ void tree_print(struct TreeNode *root) {
         printf(")");
 }
 
-// void tree_print(struct TreeNode *root, int level) {
-//     if (root == NULL)
-//         return;
-//
-//     for (int i = 0; i < level; i++)
-//         printf(i == level - 1 ? "|-" : "  ");
-//
-//     if (root->token.type == tok_number)
-//         printf("%d\n", root->token.value);
-//     else
-//         printf("%c\n", root->token.type);
-//
-//     tree_print(root->left, level + 1);
-//     tree_print(root->right, level + 1);
-// }
-
 void tree_free(struct TreeNode *root) {
     if (!root)
         return;
@@ -94,9 +78,10 @@ void tree_free(struct TreeNode *root) {
 int eval(struct Lexer *lexer) {
     struct TreeNode *root = malloc(sizeof(struct TreeNode));
     root->token = lexer_next(lexer);
-    token_print(root->token);
     root->left = NULL;
     root->right = NULL;
+
+    // token_print(root->token);
 
     struct Token token;
     struct TreeNode *node = NULL;
@@ -104,7 +89,7 @@ int eval(struct Lexer *lexer) {
     struct TreeNode *prev = NULL;
 
     while ((token = lexer_next(lexer)).type != 0 && token.type != '\n') {
-        token_print(token);
+        // token_print(token);
 
         node = malloc(sizeof(struct TreeNode));
         node->token = token;
@@ -129,9 +114,8 @@ int eval(struct Lexer *lexer) {
 
         prev = NULL;
         iter = root;
-        while (iter->right && iter->token.type != tok_number &&
-               get_precedence(iter->token.type) <
-                   get_precedence(node->token.type)) {
+        while (iter->right && get_precedence(iter->token.type) <
+                                  get_precedence(node->token.type)) {
             prev = iter;
             iter = iter->right;
         }

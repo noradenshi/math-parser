@@ -3,8 +3,9 @@
 
 #include <stddef.h>
 
-// max for number
-// ascii for other
+// token type:
+//  max for number
+//  ascii for other
 #define tok_number (char)255
 
 struct Token {
@@ -21,6 +22,5 @@ struct Lexer {
 
 void lexer_init(struct Lexer *lexer, char *data);
 struct Token lexer_next(struct Lexer *lexer);
-struct Token lexer_peek(struct Lexer *lexer);
 
 #endif
