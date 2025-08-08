@@ -21,5 +21,6 @@ struct Lexer {
 
 void lexer_init(struct Lexer *lexer, char *data);
 struct Token lexer_next(struct Lexer *lexer);
+struct Token lexer_peek(struct Lexer *lexer);
 
 #endif

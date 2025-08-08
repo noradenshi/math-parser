@@ -5,8 +5,12 @@
 #include <stdlib.h>
 
 void token_print(struct Token token) {
-    printf("(%c, %d)\n", (token.type == tok_number) ? 'N' : token.type,
-           token.value);
+    if (token.type == tok_number) {
+        printf("(number, %d)\n", token.value);
+        return;
+    }
+
+    printf("('%c', %d)\n", token.type, token.value);
 }
 
 void lexer_init(struct Lexer *lexer, char *data) {
@@ -37,4 +41,12 @@ struct Token lexer_next(struct Lexer *lexer) {
     lexer->data[lexer->offset] = tmp;
 
     return (struct Token){tok_number, value};
+}
+
+struct Token lexer_peek(struct Lexer *lexer) {
+    size_t offset = lexer->offset;
+    struct Token token = lexer_next(lexer);
+
+    lexer->offset = offset;
+    return token;
 }
