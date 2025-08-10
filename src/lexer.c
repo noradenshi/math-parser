@@ -19,26 +19,26 @@ void lexer_init(struct Lexer *lexer, char *data) {
 }
 
 struct Token lexer_next(struct Lexer *lexer) {
-    char *num = &lexer->data[lexer->offset];
-    bool is_num = false;
+
+    if (lexer->data[lexer->offset] == ' ') {
+        lexer->offset++;
+        return lexer_next(lexer);
+    }
 
     if (isdigit(lexer->data[lexer->offset])) {
-        is_num = true;
-
+        char *num = &lexer->data[lexer->offset];
         lexer->offset++;
         while (isdigit(lexer->data[lexer->offset])) {
             lexer->offset++;
         }
+
+        char tmp = lexer->data[lexer->offset];
+        lexer->data[lexer->offset] = 0;
+        int value = atoi(num);
+        lexer->data[lexer->offset] = tmp;
+
+        return (struct Token){tok_number, value};
     }
 
-    if (!is_num) {
-        return (struct Token){lexer->data[lexer->offset++], 0};
-    }
-
-    char tmp = lexer->data[lexer->offset];
-    lexer->data[lexer->offset] = 0;
-    int value = atoi(num);
-    lexer->data[lexer->offset] = tmp;
-
-    return (struct Token){tok_number, value};
+    return (struct Token){lexer->data[lexer->offset++], 0};
 }

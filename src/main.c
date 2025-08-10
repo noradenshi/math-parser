@@ -15,6 +15,8 @@ int get_precedence(const char c) {
         return 2;
     case '/':
         return 2;
+    case '(':
+        return 10;
     default:
         return -1;
     }
@@ -75,34 +77,28 @@ void tree_free(struct TreeNode *root) {
     free(root);
 }
 
-int eval(struct Lexer *lexer) {
-    struct TreeNode *root = malloc(sizeof(struct TreeNode));
-    root->token = lexer_next(lexer);
-    root->left = NULL;
-    root->right = NULL;
-
-    // token_print(root->token);
-
+struct TreeNode *lexer_tree_generate(struct Lexer *lexer) {
     struct Token token;
+    struct TreeNode *root = NULL;
     struct TreeNode *node = NULL;
     struct TreeNode *iter = NULL;
     struct TreeNode *prev = NULL;
 
-    while ((token = lexer_next(lexer)).type != 0 && token.type != '\n') {
+    while ((token = lexer_next(lexer)).type != 0 && token.type != '\n' &&
+           token.type != ')') {
         // token_print(token);
 
-        node = malloc(sizeof(struct TreeNode));
-        node->token = token;
-        node->left = NULL;
-        node->right = NULL;
-
-        if (root->token.type == tok_number) {
-            node->left = root;
-            root = node;
-            continue;
-        }
-
         if (token.type == tok_number) {
+            node = malloc(sizeof(struct TreeNode));
+            node->token = token;
+            node->left = NULL;
+            node->right = NULL;
+
+            if (!root) {
+                root = node;
+                continue;
+            }
+
             iter = root;
             while (iter->right) {
                 iter = iter->right;
@@ -114,13 +110,26 @@ int eval(struct Lexer *lexer) {
 
         prev = NULL;
         iter = root;
-        while (iter->right && get_precedence(iter->token.type) <
-                                  get_precedence(node->token.type)) {
+        while (iter && iter->right &&
+               get_precedence(iter->token.type) < get_precedence(token.type)) {
             prev = iter;
             iter = iter->right;
         }
 
-        node->left = iter;
+        if (token.type == '(') {
+            if (!prev)
+                prev = root;
+
+            node = lexer_tree_generate(lexer);
+        } else {
+            node = malloc(sizeof(struct TreeNode));
+            node->token = token;
+            node->left = NULL;
+            node->right = NULL;
+
+            node->left = iter;
+        }
+
         if (prev) {
             prev->right = node;
         } else {
@@ -129,10 +138,18 @@ int eval(struct Lexer *lexer) {
         iter = NULL;
     }
 
-    int result = tree_eval(root);
-    tree_print(root);
+    return root;
+}
+
+int eval(struct Lexer *lexer) {
+    struct TreeNode *tree = lexer_tree_generate(lexer);
+    int result = tree_eval(tree);
+
+    tree_print(tree);
     printf("\n");
-    tree_free(root);
+
+    tree_free(tree);
+
     return result;
 }
 
