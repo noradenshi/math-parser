@@ -9,11 +9,8 @@
 #define tok_number (char)255
 
 struct Token {
-    union {
-        int value;
-        int precedence;
-    };
-
+    int value;
+    short precedence;
     char type;
 };
 

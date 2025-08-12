@@ -17,7 +17,7 @@ int get_precedence(const char c) {
     case '(':
         return 10;
     default:
-        return -1;
+        return 0;
     }
 }
 
@@ -37,14 +37,15 @@ void lexer_init(struct Lexer *lexer, char *data) {
 
 struct Token lexer_next(struct Lexer *lexer) {
 
-    if (lexer->data[lexer->offset] == ' ') {
+    char *ptr = &lexer->data[lexer->offset];
+
+    if (*ptr == ' ') {
         lexer->offset++;
         return lexer_next(lexer);
     }
 
-    char *ptr = &lexer->data[lexer->offset];
 
-    if (isdigit(lexer->data[lexer->offset])) {
+    if (isdigit(*ptr)) {
         lexer->offset++;
         while (isdigit(lexer->data[lexer->offset])) {
             lexer->offset++;
@@ -55,10 +56,10 @@ struct Token lexer_next(struct Lexer *lexer) {
         int value = atoi(ptr);
         lexer->data[lexer->offset] = tmp;
 
-        return (struct Token){value, tok_number};
+        return (struct Token){value, 0, tok_number};
     }
 
     lexer->offset++;
 
-    return (struct Token){get_precedence(*ptr), *ptr};
+    return (struct Token){0, get_precedence(*ptr), *ptr};
 }

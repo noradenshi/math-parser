@@ -15,6 +15,11 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
            token.type != ')') {
         // token_print(token);
 
+        if (!root && token.type == '-') {
+            token = lexer_next(lexer);
+            token.value = -token.value;
+        }
+
         if (token.type == tok_number) {
             node = malloc(sizeof(struct TreeNode));
             node->token = token;
