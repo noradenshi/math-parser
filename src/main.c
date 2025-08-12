@@ -5,23 +5,6 @@
 
 #define BUFFER_SIZE 64
 
-int get_precedence(const char c) {
-    switch (c) {
-    case '+':
-        return 1;
-    case '-':
-        return 1;
-    case '*':
-        return 2;
-    case '/':
-        return 2;
-    case '(':
-        return 10;
-    default:
-        return -1;
-    }
-}
-
 struct TreeNode {
     struct Token token;
     struct TreeNode *left;
@@ -111,7 +94,7 @@ struct TreeNode *lexer_tree_generate(struct Lexer *lexer) {
         prev = NULL;
         iter = root;
         while (iter && iter->right &&
-               get_precedence(iter->token.type) < get_precedence(token.type)) {
+               iter->token.precedence < token.precedence) {
             prev = iter;
             iter = iter->right;
         }
@@ -121,6 +104,8 @@ struct TreeNode *lexer_tree_generate(struct Lexer *lexer) {
                 prev = root;
 
             node = lexer_tree_generate(lexer);
+            node->token.precedence += token.precedence;
+
         } else {
             node = malloc(sizeof(struct TreeNode));
             node->token = token;
@@ -135,6 +120,7 @@ struct TreeNode *lexer_tree_generate(struct Lexer *lexer) {
         } else {
             root = node;
         }
+
         iter = NULL;
     }
 

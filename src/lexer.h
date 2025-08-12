@@ -10,7 +10,11 @@
 
 struct Token {
     char type;
-    int value;
+
+    union {
+        int value;
+        int precedence;
+    };
 };
 
 void token_print(struct Token token);
