@@ -11,6 +11,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # clangd
 set(SOURCES
     src/main.c
     src/lexer.c
+    src/parser.c
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

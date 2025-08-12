@@ -9,12 +9,12 @@
 #define tok_number (char)255
 
 struct Token {
-    char type;
-
     union {
         int value;
         int precedence;
     };
+
+    char type;
 };
 
 void token_print(struct Token token);

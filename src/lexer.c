@@ -55,10 +55,10 @@ struct Token lexer_next(struct Lexer *lexer) {
         int value = atoi(ptr);
         lexer->data[lexer->offset] = tmp;
 
-        return (struct Token){tok_number, value};
+        return (struct Token){value, tok_number};
     }
 
     lexer->offset++;
 
-    return (struct Token){*ptr, get_precedence(*ptr)};
+    return (struct Token){get_precedence(*ptr), *ptr};
 }
