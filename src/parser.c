@@ -15,11 +15,6 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
            token.type != ')') {
         // token_print(token);
 
-        if (!root && token.type == '-') {
-            token = lexer_next(lexer);
-            token.value = -token.value;
-        }
-
         if (token.type == tok_number) {
             node = malloc(sizeof(struct TreeNode));
             node->token = token;
@@ -63,6 +58,9 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
 
             node->left = iter;
         }
+
+        if (token.type == '-')
+            node->right = tree_generate(lexer);
 
         if (prev) {
             prev->right = node;
@@ -115,7 +113,9 @@ double tree_eval(struct TreeNode *root) {
     case '+':
         return tree_eval(root->left) + tree_eval(root->right);
     case '-':
-        return tree_eval(root->left) - tree_eval(root->right);
+        if (root->left)
+            return tree_eval(root->left) - tree_eval(root->right);
+        return -tree_eval(root->right);
     case '*':
         return tree_eval(root->left) * tree_eval(root->right);
     case '/':

@@ -44,7 +44,6 @@ struct Token lexer_next(struct Lexer *lexer) {
         return lexer_next(lexer);
     }
 
-
     if (isdigit(*ptr)) {
         lexer->offset++;
         while (isdigit(lexer->data[lexer->offset])) {
