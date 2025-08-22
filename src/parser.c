@@ -59,9 +59,6 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
             node->left = iter;
         }
 
-        if (token.type == '-')
-            node->right = tree_generate(lexer);
-
         if (prev) {
             prev->right = node;
         } else {
