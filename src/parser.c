@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "lexer.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,10 +54,8 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
         } else {
             node = malloc(sizeof(struct TreeNode));
             node->token = token;
-            node->left = NULL;
-            node->right = NULL;
-
             node->left = iter;
+            node->right = NULL;
         }
 
         if (prev) {
@@ -106,18 +105,48 @@ void tree_print(struct TreeNode *root) {
 double tree_eval(struct TreeNode *root) {
     switch (root->token.type) {
     case tok_number:
+        if (root->right) {
+            return (double)root->token.value * tree_eval(root->right);
+        }
+
         return (double)root->token.value;
     case '+':
-        return tree_eval(root->left) + tree_eval(root->right);
+        if (!root->right) {
+            break;
+        }
+
+        if (root->left)
+            return tree_eval(root->left) + tree_eval(root->right);
+        return tree_eval(root->right);
     case '-':
+        if (!root->right) {
+            break;
+        }
+
         if (root->left)
             return tree_eval(root->left) - tree_eval(root->right);
         return -tree_eval(root->right);
     case '*':
+        if (!root->right) {
+            break;
+        }
+
         return tree_eval(root->left) * tree_eval(root->right);
     case '/':
+        if (!root->right) {
+            break;
+        }
+
         return tree_eval(root->left) / tree_eval(root->right);
     default:
+        errno = EINVAL;
+        printf("Invalid token: %c\n", root->token.type);
         return 0;
     }
+
+    errno = EINVAL;
+    printf("Operation contains a NULL: ");
+    tree_print(root);
+    printf("\n");
+    return 0;
 }

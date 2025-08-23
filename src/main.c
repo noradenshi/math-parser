@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,6 +8,11 @@
 double eval(struct Lexer *lexer) {
     struct TreeNode *tree = tree_generate(lexer);
     double result = tree_eval(tree);
+
+    if (errno != 0) {
+        tree_free(tree);
+        return 0;
+    }
 
     tree_print(tree);
     printf("\n");
@@ -29,7 +35,8 @@ int main(void) {
 
     double result = eval(&lexer);
 
-    printf("eval: %g\n", result);
+    if (errno == 0)
+        printf("eval: %g\n", result);
 
     return EXIT_SUCCESS;
 }

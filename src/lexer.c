@@ -6,6 +6,8 @@
 
 int get_precedence(const char c) {
     switch (c) {
+    case tok_number:
+        return 1;
     case '+':
         return 1;
     case '-':
@@ -55,7 +57,7 @@ struct Token lexer_next(struct Lexer *lexer) {
         int value = atoi(ptr);
         lexer->data[lexer->offset] = tmp;
 
-        return (struct Token){value, 0, tok_number};
+        return (struct Token){value, get_precedence(tok_number), tok_number};
     }
 
     lexer->offset++;
