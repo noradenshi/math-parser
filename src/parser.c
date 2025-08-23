@@ -32,6 +32,7 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
                 iter = iter->right;
             }
             iter->right = node;
+
             iter = NULL;
             continue;
         }
@@ -45,26 +46,32 @@ struct TreeNode *tree_generate(struct Lexer *lexer) {
         }
 
         if (token.type == '(') {
-            if (!prev)
-                prev = root;
-
             node = tree_generate(lexer);
             node->token.precedence += token.precedence;
 
-        } else {
-            node = malloc(sizeof(struct TreeNode));
-            node->token = token;
-            node->left = iter;
-            node->right = NULL;
+            if (!root) {
+                root = node;
+                continue;
+            }
+
+            iter->right = node;
+            iter = NULL;
+            continue;
         }
 
-        if (prev) {
-            prev->right = node;
-        } else {
-            root = node;
-        }
+        node = malloc(sizeof(struct TreeNode));
+        node->token = token;
+        node->left = iter;
+        node->right = NULL;
 
         iter = NULL;
+
+        if (!prev) {
+            root = node;
+            continue;
+        }
+
+        prev->right = node;
     }
 
     return root;
