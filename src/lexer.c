@@ -23,6 +23,10 @@ int get_precedence(const char c) {
     }
 }
 
+struct Token token_juxta() {
+    return (struct Token){0, get_precedence('*'), '*'};
+}
+
 void token_print(struct Token token) {
     if (token.type == tok_number) {
         printf("(number, %d)\n", token.value);
@@ -44,6 +48,16 @@ struct Token lexer_next(struct Lexer *lexer) {
     if (*ptr == ' ') {
         lexer->offset++;
         return lexer_next(lexer);
+    }
+
+    if (isdigit(*ptr) && *(ptr - 1) == ')') {
+        *(ptr - 1) = '*';
+        return token_juxta();
+    }
+
+    if (*ptr == '(' && (isdigit(*(ptr - 1)) || *(ptr - 1) == ')')) {
+        *(ptr - 1) = '*';
+        return token_juxta();
     }
 
     if (isdigit(*ptr)) {

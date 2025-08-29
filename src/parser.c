@@ -112,10 +112,6 @@ void tree_print(struct TreeNode *root) {
 double tree_eval(struct TreeNode *root) {
     switch (root->token.type) {
     case tok_number:
-        if (root->right) {
-            return (double)root->token.value * tree_eval(root->right);
-        }
-
         return (double)root->token.value;
     case '+':
         if (!root->right) {
