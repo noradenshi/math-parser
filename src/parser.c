@@ -141,6 +141,12 @@ double tree_eval(struct TreeNode *root) {
         }
 
         return tree_eval(root->left) / tree_eval(root->right);
+    case '%':
+        if (!root->right) {
+            break;
+        }
+
+        return (long)tree_eval(root->left) % (long)tree_eval(root->right);
     default:
         errno = EINVAL;
         printf("Invalid token: %c\n", root->token.type);

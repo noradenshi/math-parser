@@ -16,6 +16,8 @@ int get_precedence(const char c) {
         return 2;
     case '/':
         return 2;
+    case '%':
+        return 2;
     case '(':
         return 10;
     default:
