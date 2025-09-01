@@ -26,7 +26,7 @@ int get_precedence(const char c) {
 }
 
 struct Token token_juxta() {
-    return (struct Token){0, get_precedence('*'), '*'};
+    return (struct Token){0, get_precedence('*') + 1, '*'};
 }
 
 void token_print(struct Token token) {
