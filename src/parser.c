@@ -110,6 +110,12 @@ void tree_print(struct TreeNode *root) {
 }
 
 double tree_eval(struct TreeNode *root) {
+    if (!root) {
+        errno = EINVAL;
+        printf("Empty string\n");
+        return 0;
+    }
+
     switch (root->token.type) {
     case tok_number:
         return (double)root->token.value;
