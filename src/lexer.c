@@ -51,7 +51,7 @@ struct Token lexer_next(struct Lexer *lexer) {
 
     char *ptr = &lexer->data[lexer->offset];
 
-    if (*ptr == ' ') {
+    if (isspace(*ptr)) {
         lexer->offset++;
         return lexer_next(lexer);
     }
